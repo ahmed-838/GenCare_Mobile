@@ -17,7 +17,15 @@ dependencies:
   equatable: ^2.0.5
   dartz: ^0.10.1
   flutter_swiper_null_safety: ^1.0.0
-
+  animate_do: ^3.3.4
+  flutter_animate: ^4.5.0
+  rive: ^0.12.4
+  lottie: ^3.0.0
+  card_swiper: ^3.0.1
+  video_player: ^2.8.1
+  video_player_android: ^2.4.10
+  video_player_avfoundation: ^2.5.1
+  video_player_web: ^2.1.2
 
   cupertino_icons: ^1.0.8
   flutter_launcher_icons: ^0.14.2

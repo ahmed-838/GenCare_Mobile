@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class PregnancyWeeksBloc extends StatelessWidget {
@@ -23,37 +22,112 @@ class PregnancyWeeksBloc extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 150,
+              height: 180,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 itemCount: 41,
                 itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    elevation: 4,
-                    child: Container(
-                      width: 100,
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.pregnant_woman, size: 32),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Week ${index + 1}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  return AnimatedWeekCard(weekNumber: index + 1);
                 },
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedWeekCard extends StatefulWidget {
+  final int weekNumber;
+  
+  const AnimatedWeekCard({
+    super.key,
+    required this.weekNumber,
+  });
+
+  @override
+  State<AnimatedWeekCard> createState() => _AnimatedWeekCardState();
+}
+
+class _AnimatedWeekCardState extends State<AnimatedWeekCard> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isSelected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() => _isSelected = true);
+        _controller.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _isSelected = false);
+        _controller.reverse();
+      },
+      onTapCancel: () {
+        setState(() => _isSelected = false);
+        _controller.reverse();
+      },
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+          elevation: _isSelected ? 8 : 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Container(
+            width: 120,
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.pregnant_woman,
+                  size: 40,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Week ${widget.weekNumber}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${widget.weekNumber * 7} days',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
